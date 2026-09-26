@@ -23,6 +23,7 @@ Extension Chrome (Manifest V3) tải ảnh **full-size** từ album ImageFap, al
 13. [Xử lý sự cố](#xử-lý-sự-cố)
 14. [Lịch sử phiên bản](#lịch-sử-phiên-bản)
 15. [Giới hạn có chủ ý](#giới-hạn-có-chủ-ý)
+16. [Giấy phép](#giấy-phép)
 
 ---
 
@@ -491,3 +492,7 @@ Tách trạng thái theo tab; catalog và "Tải tiếp"; hỗ trợ Xasiat và 
 - Chỉ dùng với nội dung bạn có quyền lưu, và tuân thủ điều khoản của từng website.
 - Website có thể đổi HTML hoặc CDN bất kỳ lúc nào; khi đó cần cập nhật adapter tương ứng.
 - Album tối đa 500 trang phân trang, để tránh quét nhầm sang trang ngoài album.
+
+## Giấy phép
+
+Phát hành theo giấy phép [MIT](LICENSE): được tự do dùng, sửa, phân phối lại, kể cả cho mục đích thương mại, miễn là giữ nguyên thông báo bản quyền. Phần mềm được cung cấp "nguyên trạng", không kèm bảo hành.
