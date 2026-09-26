@@ -1,0 +1,76 @@
+{
+  "manifest_version": 3,
+  "name": "ImageFap + Xasiat + Viper Max Downloader",
+  "version": "0.8.0",
+  "description": "Tải ảnh full-size từ ImageFap, Xasiat hoặc thread Viper: hàng đợi nhiều album, tự tiếp tục, giới hạn tốc độ theo host.",
+  "minimum_chrome_version": "116",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "permissions": [
+    "downloads",
+    "storage",
+    "unlimitedStorage",
+    "alarms",
+    "offscreen",
+    "sidePanel",
+    "notifications",
+    "contextMenus"
+  ],
+  "host_permissions": [
+    "https://imagefap.com/*",
+    "https://*.imagefap.com/*",
+    "https://xasiat.com/*",
+    "https://*.xasiat.com/*",
+    "https://*.xascdn.li/*",
+    "https://viper.to/*",
+    "https://*.viper.to/*",
+    "https://imx.to/*",
+    "https://*.imx.to/*",
+    "https://pixhost.cc/*",
+    "https://*.pixhost.cc/*",
+    "https://pixhost.to/*",
+    "https://*.pixhost.to/*",
+    "https://imagevenue.com/*",
+    "https://*.imagevenue.com/*",
+    "http://*.imagevenue.com/*",
+    "https://photosex.biz/*",
+    "https://*.photosex.biz/*",
+    "https://viper.click/*",
+    "https://*.viper.click/*"
+  ],
+  "action": {
+    "default_title": "Max Downloader",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://imagefap.com/*",
+        "https://*.imagefap.com/*",
+        "https://xasiat.com/*",
+        "https://*.xasiat.com/*",
+        "https://viper.to/*",
+        "https://*.viper.to/*"
+      ],
+      "js": [
+        "lib/sites.js",
+        "captcha-watch.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

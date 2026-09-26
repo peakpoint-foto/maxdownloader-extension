@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Max Downloader</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header class="topbar">
+    <img src="icons/icon32.png" alt="" width="20" height="20">
+    <div class="title">Max Downloader <span id="version" class="muted"></span></div>
+    <span id="speed" class="speed" title="Tốc độ tải hiện tại"></span>
+    <button id="gear" class="icon-btn" title="Cài đặt" aria-label="Cài đặt"><svg viewBox="0 0 24 24"><path id="gear-path" d=""/></svg></button>
+  </header>
+
+  <main id="view-main">
+    <button id="alert" class="alert" hidden><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg><span id="alert-text"></span><strong>Xem</strong></button>
+
+    <section class="current">
+      <div id="current-site-block" hidden>
+        <div class="site-line"><span id="current-site" class="badge"></span><span id="current-url" class="ellipsis"></span></div>
+        <div id="current-name" class="current-name"></div>
+      </div>
+      <p id="current-unsupported" class="muted" hidden></p>
+
+      <div id="current-new" hidden>
+        <div class="split">
+          <button id="start" class="split-main"><svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg><span id="start-label">Tải cả album</span></button>
+          <button id="scope-toggle" class="split-caret" title="Tuỳ chọn tải" aria-haspopup="menu" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></button>
+          <div id="scope-menu" class="menu" role="menu" hidden>
+            <button role="menuitemradio" data-album="1"><svg viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Tải cả album / mọi trang</button>
+            <button role="menuitemradio" data-album="0"><svg viewBox="0 0 24 24"><path d="M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Chỉ tải trang này</button>
+          </div>
+        </div>
+        <p id="current-hint" class="muted small"></p>
+      </div>
+
+      <div id="current-queued" hidden>
+        <div class="progress"><div id="current-progress"></div></div>
+        <p id="current-job-line" class="muted small"></p>
+        <div class="row">
+          <button id="resume-current" class="primary grow"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Tải tiếp</button>
+          <button id="rescan-current" class="outline">Quét lại</button>
+        </div>
+      </div>
+
+      <div class="paste">
+        <textarea id="batch-urls" rows="1" placeholder="Dán link album, mỗi dòng một link"></textarea>
+        <button id="batch-add" class="icon-btn boxed" title="Thêm vào hàng đợi" aria-label="Thêm vào hàng đợi"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+      </div>
+      <p id="batch-result" class="small" hidden></p>
+    </section>
+
+    <section class="queue">
+      <div class="filters" role="tablist" aria-label="Lọc">
+        <button class="chip active" data-filter="all" role="tab">Tất cả · <span></span></button>
+        <button class="chip" data-filter="active" role="tab">Đang chạy · <span></span></button>
+        <button class="chip" data-filter="problem" role="tab">Cần xử lý · <span></span></button>
+        <button class="chip" data-filter="done" role="tab">Xong · <span></span></button>
+      </div>
+      <p id="global-line" class="muted small pad" hidden></p>
+      <ul id="jobs" class="jobs"></ul>
+      <p id="jobs-empty" class="empty"></p>
+    </section>
+
+    <footer class="footbar">
+      <span id="summary"></span>
+      <button id="clear-finished" class="link-btn">Dọn đã xong</button>
+    </footer>
+  </main>
+
+  <main id="view-settings" hidden>
+    <h2>Nơi lưu</h2>
+    <div class="block">
+      <div class="segmented two" role="radiogroup">
+        <button role="radio" data-mode="downloads">Thư mục Downloads</button>
+        <button role="radio" data-mode="directory">Thư mục tự chọn</button>
+      </div>
+      <div id="mode-downloads">
+        <label class="field">Thư mục con (tuỳ chọn)<input id="download-subdir" type="text" placeholder="ví dụ Archive/2026"></label>
+      </div>
+      <div id="mode-directory" hidden>
+        <div class="row">
+          <input id="directory-name" class="grow" type="text" readonly placeholder="Chưa chọn thư mục">
+          <button id="browse" class="outline">Chọn</button>
+        </div>
+        <div class="row">
+          <button id="grant-permission" class="outline small-btn" hidden>Cấp lại quyền ghi</button>
+          <button id="clear-directory" class="link-btn" hidden>Bỏ chọn</button>
+        </div>
+      </div>
+    </div>
+
+    <h2>Tốc độ</h2>
+    <div class="block">
+      <div class="segmented three" role="radiogroup">
+        <button role="radio" data-preset="safe">An toàn</button>
+        <button role="radio" data-preset="bal">Cân bằng</button>
+        <button role="radio" data-preset="fast">Nhanh</button>
+      </div>
+      <p id="preset-hint" class="muted small"></p>
+    </div>
+    <details class="advanced">
+      <summary><svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>Nâng cao</summary>
+      <label class="select-row">Quét song song<select id="scanConcurrency"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option></select></label>
+      <label class="select-row">Tải song song<select id="downloadConcurrency"><option>1</option><option>2</option><option>3</option><option>4</option><option>6</option></select></label>
+      <label class="select-row">Album chạy cùng lúc<select id="maxActiveJobs"><option>1</option><option>2</option><option>3</option><option>4</option></select></label>
+      <label class="select-row">Giãn request trang<select id="delayMs"><option value="0">0 ms</option><option value="300">300 ms</option><option value="750">750 ms</option><option value="1500">1,5 s</option><option value="3000">3 s</option></select></label>
+      <label class="select-row">Giãn giữa các file<select id="downloadDelayMs"><option value="0">0 ms</option><option value="250">250 ms</option><option value="500">500 ms</option><option value="1000">1 s</option></select></label>
+      <label class="select-row">Số lần thử lại<select id="retryCount"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
+    </details>
+
+    <h2>Hành vi</h2>
+    <label class="switch-row"><span>Bỏ qua ảnh đã tải trước đó</span><input type="checkbox" role="switch" id="skipDownloaded"></label>
+    <label class="switch-row"><span>Mặc định tải cả album khi thêm link</span><input type="checkbox" role="switch" id="includeAlbum"></label>
+    <label class="switch-row"><span>Tự điều chỉnh số luồng khi bị giới hạn (429)</span><input type="checkbox" role="switch" id="adaptive"></label>
+    <label class="switch-row"><span>Đọc trang qua tab đang mở</span><input type="checkbox" role="switch" id="fetchViaTab"></label>
+    <label class="switch-row"><span>Xoá khỏi danh sách tải của Chrome khi xong (file vẫn giữ)</span><input type="checkbox" role="switch" id="eraseDownloadHistory"></label>
+    <label class="switch-row"><span>Thông báo khi xong / cần CAPTCHA</span><input type="checkbox" role="switch" id="notify"></label>
+
+    <h2>Dữ liệu</h2>
+    <div class="block">
+      <div class="tools">
+        <button id="open-folder" class="outline small-btn">Mở thư mục tải</button>
+        <button id="open-download-settings" class="outline small-btn">Cài đặt Downloads</button>
+        <button id="export-catalog" class="outline small-btn">Sao lưu catalog</button>
+        <button id="import-catalog" class="outline small-btn">Nhập catalog</button>
+        <button id="export-logs" class="outline small-btn">Xuất nhật ký</button>
+        <button id="clear-history" class="outline small-btn danger">Xoá lịch sử đã tải</button>
+      </div>
+      <input id="import-file" type="file" accept="application/json,.json" hidden>
+      <p id="tools-line" class="muted small"></p>
+    </div>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden><span id="toast-text"></span><button id="toast-undo" hidden>Hoàn tác</button></div>
+
+  <script src="lib/sites.js"></script>
+  <script src="lib/paths.js"></script>
+  <script src="lib/images.js"></script>
+  <script src="adapters/imagefap.js"></script>
+  <script src="adapters/xasiat.js"></script>
+  <script src="adapters/viper.js"></script>
+  <script src="lib/store.js"></script>
+  <script src="lib/handlers.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>
